@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+
+data/raw/
+data/interim/
+data/processed/
+outputs/
+
+metadata/*
+!metadata/cohort_manifest.csv
+!metadata/dataset_summary.json

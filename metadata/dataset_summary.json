@@ -1,0 +1,63 @@
+{
+  "created_utc": "2026-10-24T16:50:42.260320+00:00",
+  "dataset_audits": [
+    {
+      "cohort": "GSE98793",
+      "platform": "GPL570",
+      "total": 192,
+      "included": 192,
+      "MDD": 128,
+      "control": 64,
+      "excluded": 0,
+      "metadata_warnings": 0,
+      "source": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE98793",
+      "download_sha256": "ea7e32f3a38b17f282450aae16c47fea53f3e36aeecca6c7d5f52b0d0489fa91",
+      "total_expression_probe_rows": 54675,
+      "selected_samples": 192,
+      "selected_value_min": 1.130566747,
+      "selected_value_max": 14.38987399,
+      "numeric_values_checked": 10497600,
+      "invalid_values": 0,
+      "probe_file": "data\\interim\\GSE98793_selected_probes.tsv.gz"
+    },
+    {
+      "cohort": "GSE32280",
+      "platform": "GPL570",
+      "total": 37,
+      "included": 16,
+      "MDD": 8,
+      "control": 8,
+      "excluded": 21,
+      "metadata_warnings": 13,
+      "source": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE32280",
+      "download_sha256": "fd8ee95425db0fdbb11e80baa476a5bfd8bbc0bbba9b20fad2b7a33aee606f3e",
+      "total_expression_probe_rows": 54675,
+      "selected_samples": 16,
+      "selected_value_min": 1.4607357,
+      "selected_value_max": 13.789193,
+      "numeric_values_checked": 874800,
+      "invalid_values": 0,
+      "probe_file": "data\\interim\\GSE32280_selected_probes.tsv.gz"
+    },
+    {
+      "cohort": "GSE39653",
+      "platform": "GPL10558",
+      "total": 53,
+      "included": 45,
+      "MDD": 21,
+      "control": 24,
+      "excluded": 8,
+      "metadata_warnings": 0,
+      "source": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE39653",
+      "download_sha256": "947b26302824d9ed95437003063199b8d0e0414b6c5f9c21877967bfd89b53e1",
+      "total_expression_probe_rows": 43116,
+      "selected_samples": 45,
+      "selected_value_min": 6.445020699,
+      "selected_value_max": 14.7002469,
+      "numeric_values_checked": 1940220,
+      "invalid_values": 0,
+      "probe_file": "data\\interim\\GSE39653_selected_probes.tsv.gz"
+    }
+  ],
+  "WARNING": "Selected matrices still contain PLATFORM-SPECIFIC PROBES; DO NOT train a cross-platform classifier until identifiers and preprocessing are validated."
+}

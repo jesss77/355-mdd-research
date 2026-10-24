@@ -1,0 +1,28 @@
+project: cmps355-mdd
+status: planned_only
+research_question: Do pathway-level transcriptomic representations improve cross-cohort generalization in MDD classification compared with gene-level representations?
+source_registry:
+  GSE98793: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE98793
+  GSE32280: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE32280
+  GSE39653: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE39653
+roles:
+  development: GSE98793
+  external:
+    - GSE32280
+    - GSE39653
+planned_features:
+  gene_level_count: 50
+  pathway_collection: MSigDB H - Hallmark
+  pathway_count: 50
+  pathway_scoring: ssGSEA
+  gene_selection_statistic: TO_DECIDE_BEFORE_FITTING
+  annotation_rule: TO_DECIDE
+  pathway_version: TO_FREEZE
+planned_model:
+  family: logistic_regression_elastic_net
+  selection_data: development_only
+  external_data_used_for_tuning: false
+planned_metrics:
+  primary: AUROC
+  secondary: [F1, sensitivity, specificity]
+status_notes: This config records approved/proposed design. It has not been executed or validated.
