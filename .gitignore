@@ -5,8 +5,13 @@ __pycache__/
 data/raw/
 data/interim/
 data/processed/
+data/annotation/
 outputs/
 
 metadata/*
 !metadata/cohort_manifest.csv
 !metadata/dataset_summary.json
+!metadata/shared_genes.csv
+!metadata/gene_mapping_summary.json
+!metadata/expression_qc_samples.csv
+!metadata/expression_qc_summary.json

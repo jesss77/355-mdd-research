@@ -1,0 +1,49 @@
+{
+  "mapping_rule": "Single Entrez Gene ID and single symbol per probe; exclude ambiguous/unmapped; median of probes per gene per sample",
+  "note": "Gene IDs matched across platforms; expression values are NOT yet scale-harmonized or safe for cross-platform training.",
+  "annotations": {
+    "GPL10558": {
+      "annotation_rows": 48107,
+      "unmapped_or_ambiguous": 16854,
+      "mapped_unambiguous_probes": 31253,
+      "unique_entrez_genes_in_annotation": 20750
+    },
+    "GPL570": {
+      "annotation_rows": 54675,
+      "unmapped_or_ambiguous": 11771,
+      "mapped_unambiguous_probes": 42904,
+      "unique_entrez_genes_in_annotation": 20848
+    }
+  },
+  "cohorts": {
+    "GSE98793": {
+      "platform": "GPL570",
+      "samples": 192,
+      "probe_rows": 54675,
+      "excluded_unmapped_probes": 11771,
+      "mapped_probe_rows": 42904,
+      "unique_entrez_genes": 20848,
+      "genes_with_multiple_probes": 10924
+    },
+    "GSE32280": {
+      "platform": "GPL570",
+      "samples": 16,
+      "probe_rows": 54675,
+      "excluded_unmapped_probes": 11771,
+      "mapped_probe_rows": 42904,
+      "unique_entrez_genes": 20848,
+      "genes_with_multiple_probes": 10924
+    },
+    "GSE39653": {
+      "platform": "GPL10558",
+      "samples": 45,
+      "probe_rows": 43116,
+      "mapped_probe_rows": 28446,
+      "excluded_unmapped_probes": 14670,
+      "unique_entrez_genes": 19457,
+      "genes_with_multiple_probes": 6162
+    }
+  },
+  "shared_genes": 16467,
+  "shared_gene_symbol_disagreements": 0
+}

@@ -1,0 +1,67 @@
+{
+  "method": "Unmodified expression values; per-sample quartiles interpolated by (n-1)*fraction; IQR=Q75-Q25",
+  "note": "Descriptive diagnostic only. Does not establish normalization equivalence, fix platform shifts, or train a model.",
+  "gene_ids_and_order_match": true,
+  "cohorts": [
+    {
+      "cohort": "GSE98793",
+      "platform": "GPL570",
+      "samples": 192,
+      "MDD": 128,
+      "controls": 64,
+      "shared_gene_count": 16467,
+      "overall_min": 1.33741,
+      "overall_max": 13.784085,
+      "median_of_sample_medians": 5.368879,
+      "range_sample_medians": [
+        5.179239,
+        5.541139
+      ],
+      "median_within_sample_iqr": 3.296282,
+      "range_within_sample_iqr": [
+        2.733969,
+        3.814976
+      ]
+    },
+    {
+      "cohort": "GSE32280",
+      "platform": "GPL570",
+      "samples": 16,
+      "MDD": 8,
+      "controls": 8,
+      "shared_gene_count": 16467,
+      "overall_min": 1.520676,
+      "overall_max": 13.633566,
+      "median_of_sample_medians": 4.76102,
+      "range_sample_medians": [
+        4.737883,
+        4.798596
+      ],
+      "median_within_sample_iqr": 3.314889,
+      "range_within_sample_iqr": [
+        3.097991,
+        3.456555
+      ]
+    },
+    {
+      "cohort": "GSE39653",
+      "platform": "GPL10558",
+      "samples": 45,
+      "MDD": 21,
+      "controls": 24,
+      "shared_gene_count": 16467,
+      "overall_min": 6.445021,
+      "overall_max": 14.700247,
+      "median_of_sample_medians": 7.196529,
+      "range_sample_medians": [
+        7.170303,
+        7.224281
+      ],
+      "median_within_sample_iqr": 1.067278,
+      "range_within_sample_iqr": [
+        1.038985,
+        1.086492
+      ]
+    }
+  ]
+}
