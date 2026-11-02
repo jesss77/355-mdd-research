@@ -1,28 +1,64 @@
 project: cmps355-mdd
-status: planned_only
+status: implementation
+
 research_question: Do pathway-level transcriptomic representations improve cross-cohort generalization in MDD classification compared with gene-level representations?
+
 source_registry:
   GSE98793: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE98793
   GSE32280: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE32280
   GSE39653: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE39653
+
 roles:
   development: GSE98793
   external:
     - GSE32280
     - GSE39653
+
+mapping:
+  identifier: entrez_gene_id
+  annotation_rule: unambiguous_single_entrez_and_symbol
+  probe_collapse: median
+  shared_gene_count: 16467
+
+preprocessing:
+  primary:
+    input: deposited_processed_expression
+    scaling: standard_scaler
+    fit_data: training_only
+    external_refit: false
+
+  sensitivity:
+    method: reference_quantile_normalization
+    reference_data: development_only
+    followed_by_training_scaling: true
+
 planned_features:
   gene_level_count: 50
+  gene_selection_statistic: TO_DECIDE_BEFORE_FITTING
+
   pathway_collection: MSigDB H - Hallmark
   pathway_count: 50
   pathway_scoring: ssGSEA
-  gene_selection_statistic: TO_DECIDE_BEFORE_FITTING
-  annotation_rule: TO_DECIDE
   pathway_version: TO_FREEZE
+
 planned_model:
   family: logistic_regression_elastic_net
+  solver: saga
   selection_data: development_only
   external_data_used_for_tuning: false
+  cv_structure: TO_DECIDE
+  C_grid: TO_DECIDE
+  l1_ratio_grid: TO_DECIDE
+
 planned_metrics:
   primary: AUROC
-  secondary: [F1, sensitivity, specificity]
-status_notes: This config records approved/proposed design. It has not been executed or validated.
+  secondary:
+    - F1
+    - sensitivity
+    - specificity
+
+status_notes: >
+  Dataset preparation, shared-gene mapping, preprocessing provenance checks,
+  development-data loading, metric utilities, CV mechanics, and the
+  training-fitted StandardScaler pipeline are implemented.
+  Model training has not started.
