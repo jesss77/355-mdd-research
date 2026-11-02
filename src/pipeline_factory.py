@@ -17,17 +17,23 @@ Still configurable:
 
 from __future__ import annotations
 
+from typing import Literal, TypeAlias
+
+from sklearn.base import BaseEstimator
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
 from src.modeling import build_elastic_net_model
 
 
+PipelineTransformer: TypeAlias = BaseEstimator | Literal["passthrough"]
+
+
 def build_model_pipeline(
     *,
-    preprocessor="passthrough",
-    selector="passthrough",
-    scaler=None,
+    preprocessor: PipelineTransformer = "passthrough",
+    selector: PipelineTransformer = "passthrough",
+    scaler: PipelineTransformer | None = None,
     C: float = 1.0,
     l1_ratio: float = 0.5,
     random_state: int = 42,
