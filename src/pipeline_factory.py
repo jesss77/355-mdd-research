@@ -1,19 +1,24 @@
-"""Assemble the shared sklearn model pipeline without fixing open choices.
+"""Assemble the shared sklearn model pipeline.
 
-The approved experiment requires the same model-selection procedure for the
-gene-level and pathway-level representations. This module gives both sides the
-same named pipeline structure:
+Primary preprocessing decision:
+- retain each cohort's deposited processed expression values
+- learn scaling from development/training data only
+- apply the learned transformation unchanged to validation/external data
 
-    preprocess -> select -> scale -> model
+The pipeline uses StandardScaler for per-feature z-scoring. When this pipeline
+is passed to the CV framework, sklearn fits the scaler separately inside each
+training fold, preventing validation leakage.
 
-Any unresolved step can remain "passthrough" until the methodology is frozen.
-Because sklearn Pipeline fits steps in order, fitted transformations stay inside
-the training fold when the pipeline is used by cv_framework.py.
+Still configurable:
+- any additional preprocessor (primary analysis: passthrough)
+- feature selector / gene-ranking method
+- elastic-net hyperparameters
 """
 
 from __future__ import annotations
 
 from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 
 from src.modeling import build_elastic_net_model
 
@@ -22,15 +27,15 @@ def build_model_pipeline(
     *,
     preprocessor="passthrough",
     selector="passthrough",
-    scaler="passthrough",
+    scaler=None,
     C: float = 1.0,
     l1_ratio: float = 0.5,
     random_state: int = 42,
 ) -> Pipeline:
-    """Create the common pipeline used by gene/pathway representations.
+    """Create the common gene/pathway modeling pipeline."""
+    if scaler is None:
+        scaler = StandardScaler()
 
-    Open methodology choices are passed in explicitly rather than hardcoded.
-    """
     model = build_elastic_net_model(
         C=C,
         l1_ratio=l1_ratio,
