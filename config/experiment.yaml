@@ -34,7 +34,9 @@ preprocessing:
 
 planned_features:
   gene_level_count: 50
-  gene_selection_statistic: TO_DECIDE_BEFORE_FITTING
+  gene_selection_statistic: anova_f_classif
+  gene_selection_method: SelectKBest
+  gene_selection_fit_data: training_fold_only
 
   pathway_collection: MSigDB H - Hallmark
   pathway_count: 50
@@ -44,29 +46,44 @@ planned_features:
 planned_model:
   family: logistic_regression_elastic_net
   solver: saga
+  class_weight: null
+
   selection_data: development_only
   external_data_used_for_tuning: false
 
   cv_structure:
-    proposed:
-      outer:
-        type: StratifiedKFold
-        n_splits: 5
-        shuffle: true
-        random_state: 42
-      inner:
-        type: StratifiedKFold
-        n_splits: 5
-        shuffle: true
-        random_state: 43
-      selection_metric: AUROC
-    status: TO_CONFIRM_WITH_TEAM
+    outer:
+      type: StratifiedKFold
+      n_splits: 5
+      shuffle: true
+      random_state: 42
 
-  C_grid: TO_DECIDE
-  l1_ratio_grid: TO_DECIDE
+    inner:
+      type: StratifiedKFold
+      n_splits: 5
+      shuffle: true
+      random_state: 43
+
+    selection_metric: roc_auc
+    status: frozen
+
+  C_grid:
+    - 0.01
+    - 0.1
+    - 1
+    - 10
+    - 100
+
+  l1_ratio_grid:
+    - 0.1
+    - 0.5
+    - 0.9
 
 planned_metrics:
   primary: AUROC
+
+  classification_threshold: 0.5
+
   secondary:
     - F1
     - sensitivity
@@ -77,4 +94,8 @@ status_notes: >
   development-data loading, metric utilities, CV mechanics, and the
   training-fitted StandardScaler pipeline are implemented.
   The professor-approved primary preprocessing strategy is fixed.
-  Model training has not started.
+  Nested stratified 5x5 cross-validation, ANOVA F top-50 gene selection,
+  the elastic-net tuning grid, classification threshold, and class-weight
+  setting are fixed before model fitting.
+  The gene selector is implemented and import-tested locally.
+  Nested model selection and model training have not started.
