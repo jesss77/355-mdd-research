@@ -46,7 +46,22 @@ planned_model:
   solver: saga
   selection_data: development_only
   external_data_used_for_tuning: false
-  cv_structure: TO_DECIDE
+
+  cv_structure:
+    proposed:
+      outer:
+        type: StratifiedKFold
+        n_splits: 5
+        shuffle: true
+        random_state: 42
+      inner:
+        type: StratifiedKFold
+        n_splits: 5
+        shuffle: true
+        random_state: 43
+      selection_metric: AUROC
+    status: TO_CONFIRM_WITH_TEAM
+
   C_grid: TO_DECIDE
   l1_ratio_grid: TO_DECIDE
 
@@ -61,4 +76,5 @@ status_notes: >
   Dataset preparation, shared-gene mapping, preprocessing provenance checks,
   development-data loading, metric utilities, CV mechanics, and the
   training-fitted StandardScaler pipeline are implemented.
+  The professor-approved primary preprocessing strategy is fixed.
   Model training has not started.
