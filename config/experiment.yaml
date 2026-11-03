@@ -32,7 +32,7 @@ preprocessing:
     reference_data: training_only
     external_refit: false
     followed_by_training_scaling: true
-    status: pending_implementation
+    status: complete
 
 planned_features:
   gene_level_count: 50
@@ -134,13 +134,42 @@ development_results:
       local_path: outputs/all_genes_baseline/all_genes_model.joblib
       git_ignored: true
 
+  reference_quantile_sensitivity:
+    nested_cv:
+      auroc_mean: 0.632
+      auroc_std: 0.054
+      f1_mean: 0.784
+      f1_std: 0.031
+      sensitivity_mean: 0.929
+      sensitivity_std: 0.082
+      specificity_mean: 0.124
+      specificity_std: 0.116
+
+    final_model:
+      best_inner_auroc: 0.645
+      C: 0.1
+      l1_ratio: 0.9
+      selected_gene_count: 50
+
+    artifact:
+      local_path: outputs/gene_sensitivity_qn/final_model/gene_model.joblib
+      git_ignored: true
+
+    interpretation: >
+      Reference quantile normalization did not improve development AUROC
+      relative to the primary top-50 gene analysis and produced greater
+      fold-to-fold variability. The deposited processed-expression strategy
+      therefore remains the predefined primary analysis.
+
 status_notes: >
   Dataset preparation, sample selection, shared-gene mapping, expression QC,
-  preprocessing provenance checks, model-data loading, metric utilities,
-  leakage-safe scaling, top-50 ANOVA gene selection, nested 5x5 model
-  selection, final top-50 gene fitting, and the all-shared-genes secondary
-  baseline are complete for GSE98793. Final fitted models are saved locally
-  under outputs/ and intentionally excluded from Git. External cohorts have
-  not been used for model selection or tuning. Remaining work includes the
-  predefined reference-quantile-normalization sensitivity analysis, Fatma's
-  Hallmark/ssGSEA pathway representation, and final frozen external evaluation.
+  preprocessing provenance checks, model-data loading, leakage-safe scaling,
+  top-50 ANOVA gene selection, nested 5x5 model selection, final top-50 gene
+  fitting, the all-shared-genes secondary baseline, and the predefined
+  reference-quantile-normalization sensitivity analysis are complete for
+  GSE98793. Final fitted models are saved locally under outputs/ and
+  intentionally excluded from Git. External cohorts have not been used for
+  model selection, tuning, preprocessing choice, or sensitivity-analysis
+  decisions. Remaining work is Fatma's Hallmark/ssGSEA pathway representation,
+  pathway model development using the same frozen procedure, and final frozen
+  evaluation on GSE32280 and GSE39653.
