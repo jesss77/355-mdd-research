@@ -14,13 +14,21 @@ Design:
 - classification threshold: 0.5
 
 External cohorts are never loaded or used here.
+
+Progress reporting:
+- prints when each outer fold starts and finishes
+- prints a heartbeat every five minutes during long GridSearchCV calls
+- reports the final full-development search separately
 """
 
 from __future__ import annotations
 
 import csv
 import json
+import threading
+import time
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 
 import joblib
@@ -43,11 +51,8 @@ from src.nested_cv import (
 from src.pipeline_factory import build_model_pipeline
 
 
-DEFAULT_OUTPUT_DIR = (
-    ROOT
-    / "outputs"
-    / "all_genes_baseline"
-)
+DEFAULT_OUTPUT_DIR = ROOT / "outputs" / "all_genes_baseline"
+HEARTBEAT_SECONDS = 300
 
 
 @dataclass(frozen=True)
@@ -78,10 +83,96 @@ class FinalBaselineResult:
     best_l1_ratio: float
 
 
+def log(message: str) -> None:
+    """Print an immediate timestamped progress message."""
+    print(f"[{datetime.now():%H:%M:%S}] {message}", flush=True)
+
+
+def format_elapsed(seconds: float) -> str:
+    """Format elapsed wall-clock time."""
+    total = int(round(seconds))
+    hours, remainder = divmod(total, 3600)
+    minutes, seconds = divmod(remainder, 60)
+
+    if hours:
+        return f"{hours}h {minutes}m {seconds}s"
+
+    if minutes:
+        return f"{minutes}m {seconds}s"
+
+    return f"{seconds}s"
+
+
+def _heartbeat_worker(
+    stop_event: threading.Event,
+    label: str,
+    started: float,
+) -> None:
+    """Report that a long-running search is still active."""
+    while not stop_event.wait(HEARTBEAT_SECONDS):
+        elapsed = format_elapsed(
+            time.perf_counter() - started
+        )
+
+        log(
+            f"{label} still running "
+            f"— elapsed {elapsed}"
+        )
+
+
+def _fit_search_with_progress(
+    search: GridSearchCV,
+    X: np.ndarray,
+    y: np.ndarray,
+    *,
+    label: str,
+) -> None:
+    """Fit GridSearchCV while emitting periodic heartbeat messages."""
+    started = time.perf_counter()
+
+    stop_event = threading.Event()
+
+    heartbeat = threading.Thread(
+        target=_heartbeat_worker,
+        args=(
+            stop_event,
+            label,
+            started,
+        ),
+        daemon=True,
+    )
+
+    log(f"{label} started")
+
+    heartbeat.start()
+
+    try:
+        search.fit(
+            X,
+            y,
+        )
+    finally:
+        stop_event.set()
+
+        heartbeat.join(
+            timeout=1.0
+        )
+
+    elapsed = format_elapsed(
+        time.perf_counter()
+        - started
+    )
+
+    log(
+        f"{label} finished in "
+        f"{elapsed}"
+    )
+
+
 def build_baseline_pipeline() -> Pipeline:
     """Build the all-shared-genes pipeline."""
     return build_model_pipeline(
-        selector="passthrough",
+        selector="passthrough"
     )
 
 
@@ -103,15 +194,23 @@ def _summarize(
     for metric in metrics:
         values = np.asarray(
             [
-                getattr(fold, metric)
-                for fold in fold_results
+                getattr(
+                    fold,
+                    metric,
+                )
+                for fold
+                in fold_results
             ],
             dtype=float,
         )
 
-        summary[metric] = {
+        summary[
+            metric
+        ] = {
             "mean": float(
-                np.mean(values)
+                np.mean(
+                    values
+                )
             ),
             "std": float(
                 np.std(
@@ -126,7 +225,10 @@ def _summarize(
 
 def _validate_development_data(
     data: CohortData,
-) -> tuple[np.ndarray, np.ndarray]:
+) -> tuple[
+    np.ndarray,
+    np.ndarray,
+]:
     if data.cohort != DEVELOPMENT:
         raise ValueError(
             "Baseline fitting is restricted "
@@ -144,12 +246,14 @@ def _validate_development_data(
 
     if X.ndim != 2:
         raise ValueError(
-            "X must be a 2D samples x genes matrix"
+            "X must be a 2D "
+            "samples x genes matrix"
         )
 
     if y.ndim != 1:
         raise ValueError(
-            "y must be a 1D label vector"
+            "y must be a 1D "
+            "label vector"
         )
 
     if X.shape[0] != y.shape[0]:
@@ -166,12 +270,17 @@ def _validate_development_data(
             "match X columns"
         )
 
-    if set(np.unique(y)) != {
+    if set(
+        np.unique(
+            y
+        )
+    ) != {
         0,
         1,
     }:
         raise ValueError(
-            "Both binary classes are required"
+            "Both binary classes "
+            "are required"
         )
 
     return X, y
@@ -181,19 +290,35 @@ def run_nested_baseline_cv(
     data: CohortData,
 ) -> BaselineCVResult:
     """Estimate baseline performance with nested CV."""
-    X, y = _validate_development_data(
-        data
+    X, y = (
+        _validate_development_data(
+            data
+        )
     )
 
     outer_cv = StratifiedKFold(
         n_splits=OUTER_SPLITS,
         shuffle=True,
-        random_state=OUTER_RANDOM_STATE,
+        random_state=(
+            OUTER_RANDOM_STATE
+        ),
     )
 
     fold_results: list[
         BaselineFoldResult
     ] = []
+
+    combinations = (
+        len(C_GRID)
+        * len(
+            L1_RATIO_GRID
+        )
+    )
+
+    fits_per_fold = (
+        combinations
+        * INNER_SPLITS
+    )
 
     for fold_number, (
         train_idx,
@@ -205,6 +330,10 @@ def run_nested_baseline_cv(
         ),
         start=1,
     ):
+        fold_started = (
+            time.perf_counter()
+        )
+
         X_train = X[
             train_idx
         ]
@@ -221,12 +350,34 @@ def run_nested_baseline_cv(
             valid_idx
         ]
 
-        inner_cv = StratifiedKFold(
-            n_splits=INNER_SPLITS,
-            shuffle=True,
-            random_state=(
-                INNER_RANDOM_STATE
-            ),
+        log(
+            "Outer fold "
+            f"{fold_number}/"
+            f"{OUTER_SPLITS} "
+            "started "
+            f"(train={len(train_idx)}, "
+            f"valid={len(valid_idx)})"
+        )
+
+        log(
+            "Outer fold "
+            f"{fold_number}/"
+            f"{OUTER_SPLITS}: "
+            f"{combinations} combinations "
+            f"x {INNER_SPLITS} folds "
+            f"= {fits_per_fold} fits"
+        )
+
+        inner_cv = (
+            StratifiedKFold(
+                n_splits=(
+                    INNER_SPLITS
+                ),
+                shuffle=True,
+                random_state=(
+                    INNER_RANDOM_STATE
+                ),
+            )
         )
 
         search = GridSearchCV(
@@ -244,9 +395,16 @@ def run_nested_baseline_cv(
             error_score="raise",
         )
 
-        search.fit(
+        _fit_search_with_progress(
+            search,
             X_train,
             y_train,
+            label=(
+                "Outer fold "
+                f"{fold_number}/"
+                f"{OUTER_SPLITS} "
+                "inner search"
+            ),
         )
 
         best_model = (
@@ -269,7 +427,7 @@ def run_nested_baseline_cv(
             )
         )
 
-        fold_results.append(
+        fold_result = (
             BaselineFoldResult(
                 fold=fold_number,
                 train_n=len(
@@ -292,10 +450,14 @@ def run_nested_baseline_cv(
                     ]
                 ),
                 auroc=(
-                    metrics["auroc"]
+                    metrics[
+                        "auroc"
+                    ]
                 ),
                 f1=(
-                    metrics["f1"]
+                    metrics[
+                        "f1"
+                    ]
                 ),
                 sensitivity=(
                     metrics[
@@ -308,6 +470,38 @@ def run_nested_baseline_cv(
                     ]
                 ),
             )
+        )
+
+        fold_results.append(
+            fold_result
+        )
+
+        elapsed = (
+            format_elapsed(
+                time.perf_counter()
+                - fold_started
+            )
+        )
+
+        log(
+            "Outer fold "
+            f"{fold_number}/"
+            f"{OUTER_SPLITS} "
+            f"complete in {elapsed} "
+            "| inner AUROC="
+            f"{fold_result.best_inner_auroc:.3f} "
+            "| outer AUROC="
+            f"{fold_result.auroc:.3f} "
+            "| F1="
+            f"{fold_result.f1:.3f} "
+            "| sensitivity="
+            f"{fold_result.sensitivity:.3f} "
+            "| specificity="
+            f"{fold_result.specificity:.3f} "
+            "| C="
+            f"{fold_result.best_C:g} "
+            "| l1_ratio="
+            f"{fold_result.best_l1_ratio:g}"
         )
 
     return BaselineCVResult(
@@ -324,16 +518,42 @@ def fit_final_baseline(
     data: CohortData,
 ) -> FinalBaselineResult:
     """Fit the final all-genes baseline on GSE98793."""
-    X, y = _validate_development_data(
-        data
+    X, y = (
+        _validate_development_data(
+            data
+        )
     )
 
-    inner_cv = StratifiedKFold(
-        n_splits=INNER_SPLITS,
-        shuffle=True,
-        random_state=(
-            INNER_RANDOM_STATE
-        ),
+    combinations = (
+        len(C_GRID)
+        * len(
+            L1_RATIO_GRID
+        )
+    )
+
+    total_fits = (
+        combinations
+        * INNER_SPLITS
+    )
+
+    log(
+        "Final all-genes search: "
+        f"{combinations} combinations "
+        f"x {INNER_SPLITS} folds "
+        f"= {total_fits} CV fits "
+        "+ final refit"
+    )
+
+    inner_cv = (
+        StratifiedKFold(
+            n_splits=(
+                INNER_SPLITS
+            ),
+            shuffle=True,
+            random_state=(
+                INNER_RANDOM_STATE
+            ),
+        )
     )
 
     search = GridSearchCV(
@@ -351,9 +571,14 @@ def fit_final_baseline(
         error_score="raise",
     )
 
-    search.fit(
+    _fit_search_with_progress(
+        search,
         X,
         y,
+        label=(
+            "Final all-genes "
+            "development search"
+        ),
     )
 
     return FinalBaselineResult(
@@ -589,9 +814,11 @@ def save_baseline_results(
 def print_cv_result(
     result: BaselineCVResult,
 ) -> None:
+    """Print the completed nested-CV summary."""
     print(
         "All-shared-genes nested CV: "
-        "GSE98793 only"
+        "GSE98793 only",
+        flush=True,
     )
 
     print(
@@ -599,7 +826,8 @@ def print_cv_result(
         f"outer={OUTER_SPLITS}, "
         f"inner={INNER_SPLITS}, "
         f"grid="
-        f"{len(C_GRID) * len(L1_RATIO_GRID)}"
+        f"{len(C_GRID) * len(L1_RATIO_GRID)}",
+        flush=True,
     )
 
     for fold in result.folds:
@@ -620,11 +848,13 @@ def print_cv_result(
             f"sensitivity="
             f"{fold.sensitivity:.3f}, "
             f"specificity="
-            f"{fold.specificity:.3f}"
+            f"{fold.specificity:.3f}",
+            flush=True,
         )
 
     print(
-        "\nOuter-fold summary:"
+        "\nOuter-fold summary:",
+        flush=True,
     )
 
     for metric, values in (
@@ -634,13 +864,24 @@ def print_cv_result(
             f"{metric}: "
             f"{values['mean']:.3f} "
             f"± "
-            f"{values['std']:.3f}"
+            f"{values['std']:.3f}",
+            flush=True,
         )
 
 
 def main() -> None:
+    log(
+        "Loading GSE98793 "
+        "development data"
+    )
+
     data = load_cohort(
         DEVELOPMENT
+    )
+
+    log(
+        "Starting all-shared-genes "
+        "nested CV"
     )
 
     cv_result = (
@@ -653,9 +894,10 @@ def main() -> None:
         cv_result
     )
 
-    print(
-        "\nFitting final "
-        "all-shared-genes baseline..."
+    log(
+        "Nested CV complete; "
+        "starting final "
+        "all-shared-genes baseline"
     )
 
     final_result = (
@@ -666,17 +908,20 @@ def main() -> None:
 
     print(
         f"final best inner AUROC="
-        f"{final_result.best_inner_auroc:.3f}"
+        f"{final_result.best_inner_auroc:.3f}",
+        flush=True,
     )
 
     print(
         f"final best C="
-        f"{final_result.best_C:g}"
+        f"{final_result.best_C:g}",
+        flush=True,
     )
 
     print(
         f"final best l1_ratio="
-        f"{final_result.best_l1_ratio:g}"
+        f"{final_result.best_l1_ratio:g}",
+        flush=True,
     )
 
     output_dir = (
@@ -687,19 +932,24 @@ def main() -> None:
         )
     )
 
-    print(
-        "\nSaved baseline outputs to: "
+    log(
+        "Saved baseline outputs to "
         f"{output_dir}"
     )
 
     print(
-        "  fold_metrics.tsv"
+        "  fold_metrics.tsv",
+        flush=True,
     )
+
     print(
-        "  summary.json"
+        "  summary.json",
+        flush=True,
     )
+
     print(
-        "  all_genes_model.joblib"
+        "  all_genes_model.joblib",
+        flush=True,
     )
 
 
