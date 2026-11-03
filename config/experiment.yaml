@@ -29,8 +29,10 @@ preprocessing:
 
   sensitivity:
     method: reference_quantile_normalization
-    reference_data: development_only
+    reference_data: training_only
+    external_refit: false
     followed_by_training_scaling: true
+    status: pending_implementation
 
 planned_features:
   gene_level_count: 50
@@ -89,13 +91,56 @@ planned_metrics:
     - sensitivity
     - specificity
 
+development_results:
+  top_50_gene_model:
+    nested_cv:
+      auroc_mean: 0.646
+      auroc_std: 0.028
+      f1_mean: 0.769
+      f1_std: 0.025
+      sensitivity_mean: 0.899
+      sensitivity_std: 0.066
+      specificity_mean: 0.124
+      specificity_std: 0.149
+
+    final_model:
+      best_inner_auroc: 0.6661439842209074
+      C: 0.01
+      l1_ratio: 0.1
+      selected_gene_count: 50
+
+    artifact:
+      local_path: outputs/gene_final_model/gene_model.joblib
+      git_ignored: true
+
+  all_shared_genes_baseline:
+    nested_cv:
+      auroc_mean: 0.644
+      auroc_std: 0.043
+      f1_mean: 0.695
+      f1_std: 0.039
+      sensitivity_mean: 0.678
+      sensitivity_std: 0.110
+      specificity_mean: 0.469
+      specificity_std: 0.211
+
+    final_model:
+      best_inner_auroc: 0.698
+      C: 10
+      l1_ratio: 0.1
+      gene_count: 16467
+
+    artifact:
+      local_path: outputs/all_genes_baseline/all_genes_model.joblib
+      git_ignored: true
+
 status_notes: >
-  Dataset preparation, shared-gene mapping, preprocessing provenance checks,
-  development-data loading, metric utilities, CV mechanics, and the
-  training-fitted StandardScaler pipeline are implemented.
-  The professor-approved primary preprocessing strategy is fixed.
-  Nested stratified 5x5 cross-validation, ANOVA F top-50 gene selection,
-  the elastic-net tuning grid, classification threshold, and class-weight
-  setting are fixed before model fitting.
-  The gene selector is implemented and import-tested locally.
-  Nested model selection and model training have not started.
+  Dataset preparation, sample selection, shared-gene mapping, expression QC,
+  preprocessing provenance checks, model-data loading, metric utilities,
+  leakage-safe scaling, top-50 ANOVA gene selection, nested 5x5 model
+  selection, final top-50 gene fitting, and the all-shared-genes secondary
+  baseline are complete for GSE98793. Final fitted models are saved locally
+  under outputs/ and intentionally excluded from Git. External cohorts have
+  not been used for model selection or tuning. Remaining work includes the
+  predefined reference-quantile-normalization sensitivity analysis, Fatma's
+  Hallmark/ssGSEA pathway representation, and final frozen external evaluation.
