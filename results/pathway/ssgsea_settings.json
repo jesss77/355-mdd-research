@@ -1,0 +1,17 @@
+{
+  "msigdb_collection": "H (Hallmark)",
+  "msigdb_version": "2024.1.Hs",
+  "gene_id": "entrez_gene_id",
+  "tool": "gseapy 1.3.2",
+  "method": "ssGSEA (Barbie et al. 2009)",
+  "score_used": "ES (raw; NES not used because it is rescaled using all samples in the batch)",
+  "sample_norm_method": "rank",
+  "correl_norm_type": "rank",
+  "weight": 0.25,
+  "min_size": 15,
+  "max_size": 500,
+  "pathways": 50,
+  "per_sample_independence_check_max_diff": 0.0,
+  "reference_qn_effect_on_scores": "none (max |diff| = 0 in all cohorts; ssGSEA uses within-sample ranks only)",
+  "scaling": "none here; StandardScaler fit on training folds inside the shared pipeline"
+}
