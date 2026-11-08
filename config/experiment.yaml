@@ -43,7 +43,17 @@ planned_features:
   pathway_collection: MSigDB H - Hallmark
   pathway_count: 50
   pathway_scoring: ssGSEA
-  pathway_version: TO_FREEZE
+  pathway_version: 2024.1.Hs
+  pathway_gene_id: entrez_gene_id
+  pathway_score_used: raw_ES
+  pathway_sample_norm_method: rank
+  pathway_correl_norm_type: rank
+  pathway_weight: 0.25
+  pathway_min_size: 15
+  pathway_max_size: 500
+  pathway_selector: passthrough
+  pathway_scaling: standard_scaler
+  pathway_scaling_fit_data: training_only
 
 planned_model:
   family: logistic_regression_elastic_net
@@ -113,6 +123,50 @@ development_results:
       local_path: outputs/gene_final_model/gene_model.joblib
       git_ignored: true
 
+  pathway_model:
+    feature_generation:
+      collection: MSigDB_Hallmark
+      version: 2024.1.Hs
+      identifier: entrez_gene_id
+      tool: gseapy_1.3.2
+      score: raw_ES
+      sample_norm_method: rank
+      correl_norm_type: rank
+      weight: 0.25
+      min_size: 15
+      max_size: 500
+      pathway_count: 50
+      min_genes_present: 27
+      median_coverage_pct: 92.05
+      per_sample_independence_check_max_diff: 0.0
+
+    nested_cv:
+      auroc_mean: 0.5846568047337278
+      auroc_std: 0.08912322930499454
+      f1_mean: 0.7734707266151245
+      f1_std: 0.021591546182785994
+      sensitivity_mean: 0.8827692307692308
+      sensitivity_std: 0.06281747768701461
+      specificity_mean: 0.2012820512820513
+      specificity_std: 0.13834871946942523
+
+    final_model:
+      best_inner_auroc: 0.6507061143984221
+      C: 10.0
+      l1_ratio: 0.9
+      pathway_count: 50
+      nonzero_pathways: 50
+
+    artifact:
+      committed_model: false
+      reproducible_from_frozen_settings: true
+
+    interpretation: >
+      The pathway representation had a lower mean development AUROC than the
+      primary top-50 gene representation and greater fold-to-fold variability.
+      This internal result does not answer the primary research question,
+      which depends on frozen external evaluation.
+
   all_shared_genes_baseline:
     nested_cv:
       auroc_mean: 0.644
@@ -156,20 +210,20 @@ development_results:
       git_ignored: true
 
     interpretation: >
-      Reference quantile normalization did not improve development AUROC
-      relative to the primary top-50 gene analysis and produced greater
-      fold-to-fold variability. The deposited processed-expression strategy
-      therefore remains the predefined primary analysis.
+      Reference quantile normalization did not produce an observed improvement
+      in development AUROC relative to the predefined primary top-50 gene
+      analysis. This sensitivity result is development-only and does not
+      establish external superiority of either preprocessing strategy.
 
 status_notes: >
   Dataset preparation, sample selection, shared-gene mapping, expression QC,
-  preprocessing provenance checks, model-data loading, leakage-safe scaling,
-  top-50 ANOVA gene selection, nested 5x5 model selection, final top-50 gene
-  fitting, the all-shared-genes secondary baseline, and the predefined
-  reference-quantile-normalization sensitivity analysis are complete for
-  GSE98793. Final fitted models are saved locally under outputs/ and
-  intentionally excluded from Git. External cohorts have not been used for
-  model selection, tuning, preprocessing choice, or sensitivity-analysis
-  decisions. Remaining work is Fatma's Hallmark/ssGSEA pathway representation,
-  pathway model development using the same frozen procedure, and final frozen
-  evaluation on GSE32280 and GSE39653.
+  preprocessing provenance checks, leakage-safe scaling, top-50 ANOVA gene
+  selection, nested 5x5 gene-model selection, final top-50 gene fitting, the
+  all-shared-genes secondary baseline, the reference-quantile-normalization
+  sensitivity analysis, Hallmark ssGSEA feature generation, pathway nested
+  cross-validation, and final pathway-model selection are complete for
+  GSE98793. The gene and pathway development configurations are now frozen.
+  External cohorts have not been used for supervised feature selection,
+  hyperparameter tuning, model fitting, or preprocessing-parameter estimation.
+  The remaining primary experiment is frozen external evaluation of the gene
+  and pathway representations on GSE32280 and GSE39653.

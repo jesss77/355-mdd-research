@@ -1,0 +1,194 @@
+{
+  "design": {
+    "development": "GSE98793",
+    "external_cohorts": [
+      "GSE32280",
+      "GSE39653"
+    ],
+    "gene_model": {
+      "features": "top_50_anova_f",
+      "C": 0.01,
+      "l1_ratio": 0.1
+    },
+    "pathway_model": {
+      "features": "50_Hallmark_ssGSEA_raw_ES",
+      "C": 10.0,
+      "l1_ratio": 0.9
+    },
+    "threshold": 0.5,
+    "bootstrap_replicates": 10000,
+    "bootstrap_random_state": 44,
+    "bootstrap_method": "class_stratified_paired",
+    "ci_level": 0.95
+  },
+  "cohorts": {
+    "GSE32280": {
+      "n": 16,
+      "MDD": 8,
+      "control": 8,
+      "gene": {
+        "metrics": {
+          "auroc": 0.453125,
+          "f1": 0.42857142857142855,
+          "sensitivity": 0.375,
+          "specificity": 0.625,
+          "balanced_accuracy": 0.5
+        },
+        "confusion": {
+          "tn": 5,
+          "fp": 3,
+          "fn": 5,
+          "tp": 3
+        },
+        "ci": {
+          "auroc": {
+            "low": 0.171875,
+            "high": 0.75
+          },
+          "f1": {
+            "low": 0.13333333333333333,
+            "high": 0.7142857142857143
+          },
+          "sensitivity": {
+            "low": 0.125,
+            "high": 0.75
+          },
+          "specificity": {
+            "low": 0.25,
+            "high": 0.875
+          },
+          "balanced_accuracy": {
+            "low": 0.25,
+            "high": 0.75
+          }
+        }
+      },
+      "pathway": {
+        "metrics": {
+          "auroc": 0.75,
+          "f1": 0.6153846153846154,
+          "sensitivity": 0.5,
+          "specificity": 0.875,
+          "balanced_accuracy": 0.6875
+        },
+        "confusion": {
+          "tn": 7,
+          "fp": 1,
+          "fn": 4,
+          "tp": 4
+        },
+        "ci": {
+          "auroc": {
+            "low": 0.46875,
+            "high": 0.953125
+          },
+          "f1": {
+            "low": 0.2,
+            "high": 0.875
+          },
+          "sensitivity": {
+            "low": 0.125,
+            "high": 0.875
+          },
+          "specificity": {
+            "low": 0.625,
+            "high": 1.0
+          },
+          "balanced_accuracy": {
+            "low": 0.5,
+            "high": 0.875
+          }
+        }
+      },
+      "paired_auroc_difference": {
+        "pathway_minus_gene": 0.296875,
+        "ci_low": -0.078125,
+        "ci_high": 0.640625
+      }
+    },
+    "GSE39653": {
+      "n": 45,
+      "MDD": 21,
+      "control": 24,
+      "gene": {
+        "metrics": {
+          "auroc": 0.36904761904761907,
+          "f1": 0.6363636363636364,
+          "sensitivity": 1.0,
+          "specificity": 0.0,
+          "balanced_accuracy": 0.5
+        },
+        "confusion": {
+          "tn": 0,
+          "fp": 24,
+          "fn": 0,
+          "tp": 21
+        },
+        "ci": {
+          "auroc": {
+            "low": 0.20833333333333334,
+            "high": 0.5357142857142857
+          },
+          "f1": {
+            "low": 0.6363636363636364,
+            "high": 0.6363636363636364
+          },
+          "sensitivity": {
+            "low": 1.0,
+            "high": 1.0
+          },
+          "specificity": {
+            "low": 0.0,
+            "high": 0.0
+          },
+          "balanced_accuracy": {
+            "low": 0.5,
+            "high": 0.5
+          }
+        }
+      },
+      "pathway": {
+        "metrics": {
+          "auroc": 0.4087301587301587,
+          "f1": 0.5714285714285714,
+          "sensitivity": 0.8571428571428571,
+          "specificity": 0.0,
+          "balanced_accuracy": 0.42857142857142855
+        },
+        "confusion": {
+          "tn": 0,
+          "fp": 24,
+          "fn": 3,
+          "tp": 18
+        },
+        "ci": {
+          "auroc": {
+            "low": 0.24404761904761904,
+            "high": 0.5853174603174602
+          },
+          "f1": {
+            "low": 0.5,
+            "high": 0.6363636363636364
+          },
+          "sensitivity": {
+            "low": 0.7142857142857143,
+            "high": 1.0
+          },
+          "specificity": {
+            "low": 0.0,
+            "high": 0.0
+          },
+          "balanced_accuracy": {
+            "low": 0.35714285714285715,
+            "high": 0.5
+          }
+        }
+      },
+      "paired_auroc_difference": {
+        "pathway_minus_gene": 0.03968253968253965,
+        "ci_low": -0.19642857142857145,
+        "ci_high": 0.2777777777777778
+      }
+    }
+  }
+}
