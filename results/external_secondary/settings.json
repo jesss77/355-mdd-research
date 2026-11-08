@@ -1,0 +1,33 @@
+{
+  "frozen_settings": {
+    "gene": {
+      "pre": "passthrough",
+      "sel": "top50",
+      "C": 0.01,
+      "l1": 0.1
+    },
+    "gene_qn": {
+      "pre": "qn",
+      "sel": "top50",
+      "C": 0.1,
+      "l1": 0.9
+    },
+    "all_genes": {
+      "pre": "passthrough",
+      "sel": "all",
+      "C": 10.0,
+      "l1": 0.1
+    },
+    "pathway": {
+      "C": 10.0,
+      "l1": 0.9
+    }
+  },
+  "bootstrap": {
+    "replicates": 10000,
+    "random_state": 44,
+    "method": "class_stratified_paired",
+    "ci_level": 0.95
+  },
+  "note": "Pre-specified secondary/sensitivity analyses; pathway scores are identical under reference QN"
+}
