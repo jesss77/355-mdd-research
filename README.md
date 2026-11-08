@@ -55,8 +55,27 @@ The pipeline produces:
 
 ## Progress
 
-Completed sample selection and mapped platform-specific probes to **16,467 shared Entrez genes**, aggregating multiple probes per gene by their median expression. The expression-audit script checks sample distributions and matching gene order; we still need to interpret its results and verify cross-platform preprocessing.
+The full analysis pipeline is complete.
 
-Next: validate preprocessing compatibility, construct the 50-gene and 50-pathway representations, train using GSE98793 only, and evaluate the frozen models on both external datasets.
+Completed steps include:
 
-**Note:** The current matrices have not been harmonized for model training yet.
+- sample selection and cohort auditing;
+- probe-to-gene mapping and aggregation to 16,467 shared Entrez genes;
+- expression-distribution and preprocessing checks;
+- leakage-safe gene-level feature selection using the top 50 ANOVA-ranked genes;
+- Hallmark ssGSEA pathway feature generation;
+- nested 5×5 cross-validation on GSE98793;
+- frozen gene-level and pathway-level model selection;
+- external evaluation on GSE32280 and GSE39653;
+- reference-quantile-normalization and all-shared-genes sensitivity analyses;
+- paired class-stratified bootstrap comparisons with 10,000 replicates;
+- manuscript figure generation.
+
+The external analyses did not provide evidence that pathway-level representations generalize better than gene-level representations across cohorts.
+
+Primary and secondary evaluation outputs are stored under `results/`, while manuscript-ready figures are stored under `figures/`.
+
+Paper figures can be regenerated from the repository root with:
+
+```bash
+python src/make_figures.py

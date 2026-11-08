@@ -1,5 +1,5 @@
 project: cmps355-mdd
-status: implementation
+status: analysis_complete
 
 research_question: Do pathway-level transcriptomic representations improve cross-cohort generalization in MDD classification compared with gene-level representations?
 
@@ -221,9 +221,10 @@ status_notes: >
   selection, nested 5x5 gene-model selection, final top-50 gene fitting, the
   all-shared-genes secondary baseline, the reference-quantile-normalization
   sensitivity analysis, Hallmark ssGSEA feature generation, pathway nested
-  cross-validation, and final pathway-model selection are complete for
-  GSE98793. The gene and pathway development configurations are now frozen.
-  External cohorts have not been used for supervised feature selection,
-  hyperparameter tuning, model fitting, or preprocessing-parameter estimation.
-  The remaining primary experiment is frozen external evaluation of the gene
-  and pathway representations on GSE32280 and GSE39653.
+  cross-validation, final pathway-model selection, frozen external validation,
+  and pre-specified secondary external analyses are complete. Models and
+  preprocessing decisions were determined using GSE98793 only; external cohorts
+  were not used for supervised feature selection, hyperparameter tuning, model
+  fitting, or preprocessing-parameter estimation. External evaluation on
+  GSE32280 and GSE39653 did not provide evidence that pathway-level
+  representations generalize better than gene-level representations.
