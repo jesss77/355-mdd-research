@@ -1,0 +1,5 @@
+cohort,model,tn,fp,fn,tp
+GSE32280,gene,5,3,5,3
+GSE32280,pathway,7,1,4,4
+GSE39653,gene,0,24,0,21
+GSE39653,pathway,0,24,3,18
