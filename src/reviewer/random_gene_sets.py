@@ -5,11 +5,13 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+from typing import cast
 
 import gseapy
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
+from sklearn.pipeline import Pipeline
 
 from src.model_data import DEVELOPMENT, EXTERNAL, ROOT, load_cohort
 from src.modeling import classification_metrics
@@ -31,7 +33,6 @@ MAX_SIZE = 500
 
 PATHWAY_SUMMARY = ROOT / "results" / "pathway" / "summary.json"
 EXTERNAL_METRICS = ROOT / "results" / "external" / "metrics.csv"
-
 
 
 def load_reference_results():
@@ -104,7 +105,6 @@ def make_random_panels(shared_gene_ids, templates, n_panels):
     mapping = []
 
     for panel in range(1, n_panels + 1):
-        names = []
         for i, (hallmark, size) in enumerate(templates, start=1):
             name = f"P{panel:03d}_S{i:02d}"
             genes = [
@@ -112,8 +112,7 @@ def make_random_panels(shared_gene_ids, templates, n_panels):
                     universe, size=size, replace=False
                 )
             ]
-            panel_names[panel] = panel_names.get(panel, [])
-            panel_names[panel].append(name)
+            panel_names.setdefault(panel, []).append(name)
             gene_sets[name] = [PFX + g for g in genes]
             mapping.append({
                 "panel": panel,
@@ -287,7 +286,7 @@ def main():
             scores[DEVELOPMENT][names].to_numpy(float),
             dev.y,
         )
-        model = search.best_estimator_
+        model = cast(Pipeline, search.best_estimator_)
 
         row = {
             "panel": panel,

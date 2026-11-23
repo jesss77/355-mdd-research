@@ -6,11 +6,13 @@ import csv
 import json
 import warnings
 from collections import Counter
+from typing import cast
 
 import numpy as np
 from sklearn.exceptions import UndefinedMetricWarning
 from sklearn.feature_selection import SelectKBest
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
+from sklearn.pipeline import Pipeline
 
 from src.external_validation import load_pathway_features, verify_gene_alignment
 from src.gene_features import build_gene_selector
@@ -123,8 +125,8 @@ def main():
         gs.fit(dev.X[tr], dev.y[tr])
         ps.fit(dev_path.X[tr], dev.y[tr])
 
-        gm = gs.best_estimator_
-        pm = ps.best_estimator_
+        gm = cast(Pipeline, gs.best_estimator_)
+        pm = cast(Pipeline, ps.best_estimator_)
 
         rows.append(metrics_row(
             fold, "gene", "GSE98793_outer_valid",
