@@ -1,0 +1,63 @@
+{
+  "design": {
+    "outer_splits": 5,
+    "outer_random_state": 42,
+    "inner_splits": 5,
+    "inner_random_state": 43,
+    "note": "Each external estimate comes from a model trained on one original outer training fold (80% of GSE98793)."
+  },
+  "external_auroc": {
+    "GSE32280": {
+      "gene": {
+        "mean": 0.5,
+        "std": 0.03125,
+        "median": 0.484375,
+        "min": 0.46875,
+        "max": 0.546875
+      },
+      "pathway": {
+        "mean": 0.621875,
+        "std": 0.16026101756197605,
+        "median": 0.640625,
+        "min": 0.375,
+        "max": 0.8125
+      }
+    },
+    "GSE39653": {
+      "gene": {
+        "mean": 0.36666666666666664,
+        "std": 0.0806005035285774,
+        "median": 0.371031746031746,
+        "min": 0.25595238095238093,
+        "max": 0.4742063492063492
+      },
+      "pathway": {
+        "mean": 0.4023809523809524,
+        "std": 0.06066044401733261,
+        "median": 0.4087301587301587,
+        "min": 0.3115079365079365,
+        "max": 0.47817460317460314
+      }
+    }
+  },
+  "paired_pathway_minus_gene": {
+    "GSE32280": {
+      "mean": 0.121875,
+      "std": 0.16064141453093594,
+      "median": 0.125,
+      "min": -0.109375,
+      "max": 0.34375
+    },
+    "GSE39653": {
+      "mean": 0.03571428571428574,
+      "std": 0.09687742552169606,
+      "median": 0.03769841269841273,
+      "min": -0.08531746031746029,
+      "max": 0.16865079365079372
+    }
+  },
+  "gene_selection_stability": {
+    "unique_genes_selected_across_folds": 158,
+    "genes_selected_in_all_5_folds": 8
+  }
+}

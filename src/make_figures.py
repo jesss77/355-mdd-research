@@ -26,7 +26,7 @@ CLASS_COLOR = {0: "#1baf7a", 1: "#6250d6"}
 CLASS_MARKER = {0: "o", 1: "^"}
 CLASS_LABEL = {0: "Control", 1: "MDD"}
 COHORT_LABEL = {"GSE98793": "GSE98793\n(dev., whole blood)",
-                "GSE32280": "GSE32280\n(lymphocytes)",
+                "GSE32280": "GSE32280\n(leukocyte/lymphocyte)",
                 "GSE39653": "GSE39653\n(PBMC, Illumina)"}
 COHORTS = ["GSE98793", "GSE32280", "GSE39653"]
 EXTERNAL = ["GSE32280", "GSE39653"]

@@ -1,0 +1,54 @@
+reviewer_experiments:
+  status: post_review
+
+  training_variability:
+    description: >
+      Refit the original gene and pathway pipelines within each of the
+      five original outer training folds and evaluate each fitted model
+      on both frozen external cohorts.
+    outer_splits: 5
+    outer_random_state: 42
+    inner_splits: 5
+    inner_random_state: 43
+    external_refit: false
+
+  random_gene_sets:
+    description: >
+      Compare the Hallmark pathway representation against 100 random
+      50-gene-set panels matched one-for-one to the effective Hallmark
+      gene-set sizes in the 16467-gene shared universe.
+    random_seed: 45
+    n_panels: 100
+    sets_per_panel: 50
+    sampling_within_set: without_replacement
+    overlap_between_sets: allowed
+
+    ssgsea:
+      tool: gseapy_1.3.2
+      score: raw_ES
+      sample_norm_method: rank
+      correl_norm_type: rank
+      weight: 0.25
+      min_size: 15
+      max_size: 500
+
+    model:
+      family: elastic_net_logistic_regression
+      solver: saga
+      selection_metric: roc_auc
+      inner_splits: 5
+      inner_random_state: 43
+
+      C_grid:
+        - 0.01
+        - 0.1
+        - 1
+        - 10
+        - 100
+
+      l1_ratio_grid:
+        - 0.1
+        - 0.5
+        - 0.9
+
+    external_refit: false

@@ -1,0 +1,71 @@
+{
+  "settings": {
+    "n_panels": 100,
+    "sets_per_panel": 50,
+    "random_seed": 45,
+    "matching": "Each random set matches the number of genes from its Hallmark template present in the 16,467-gene shared universe.",
+    "sampling": "Without replacement within a set; overlap across sets is allowed.",
+    "ssgsea": {
+      "tool": "gseapy 1.3.2",
+      "score": "raw ES",
+      "sample_norm_method": "rank",
+      "correl_norm_type": "rank",
+      "weight": 0.25,
+      "min_size": 15,
+      "max_size": 500
+    },
+    "model_selection": "Same 5-fold development-only inner GridSearchCV and elastic-net grid used for the final Hallmark model."
+  },
+  "development_best_inner_auroc": {
+    "random_distribution": {
+      "mean": 0.6247290532544378,
+      "std": 0.04964596545459832,
+      "median": 0.6345069033530572,
+      "min": 0.5,
+      "max": 0.7404871794871796
+    },
+    "hallmark_position": {
+      "hallmark_value": 0.6507061143984221,
+      "random_ge_hallmark_count": 32,
+      "n_random": 100,
+      "hallmark_percentile_pct": 68.0,
+      "corrected_exceedance_fraction": 0.32673267326732675
+    }
+  },
+  "external_auroc": {
+    "GSE32280": {
+      "random_distribution": {
+        "mean": 0.54453125,
+        "std": 0.1150638812678054,
+        "median": 0.53125,
+        "min": 0.3125,
+        "max": 0.84375
+      },
+      "hallmark_position": {
+        "hallmark_value": 0.75,
+        "random_ge_hallmark_count": 7,
+        "n_random": 100,
+        "hallmark_percentile_pct": 95.0,
+        "corrected_exceedance_fraction": 0.07920792079207921
+      },
+      "primary_gene_reference": 0.453125
+    },
+    "GSE39653": {
+      "random_distribution": {
+        "mean": 0.4791071428571429,
+        "std": 0.09535262098510704,
+        "median": 0.4722222222222222,
+        "min": 0.2579365079365079,
+        "max": 0.7738095238095238
+      },
+      "hallmark_position": {
+        "hallmark_value": 0.4087301587301587,
+        "random_ge_hallmark_count": 75,
+        "n_random": 100,
+        "hallmark_percentile_pct": 25.0,
+        "corrected_exceedance_fraction": 0.7524752475247525
+      },
+      "primary_gene_reference": 0.36904761904761907
+    }
+  }
+}

@@ -79,3 +79,21 @@ Paper figures can be regenerated from the repository root with:
 
 ```bash
 python src/make_figures.py
+```
+
+## Post-review robustness analyses
+
+Peer-review robustness analyses were added after the original pre-specified study.
+
+They include:
+
+- external training-variability evaluation using the five original outer-fold development fits;
+- gene-selection stability across the five outer folds;
+- a control analysis using 100 size-matched random 50-gene-set panels.
+
+Methods and reproduction commands are documented in `docs/reviewer_experiments.md`.
+
+Results are stored in:
+
+- `results/reviewer_training_variability/`
+- `results/reviewer_random_gene_sets/`
