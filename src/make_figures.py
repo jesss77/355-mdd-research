@@ -156,7 +156,7 @@ def fig_dev_vs_external():
     ax.axhline(0.5, color=INK_2, linestyle=(0, (3, 2)), linewidth=0.7)
     for m in MODEL_ORDER:
         ys = [DEV_AUROC[m]] + [auc[(auc.cohort == c) & (auc.model == m)].estimate.iloc[0] for c in EXTERNAL]
-        ax.plot([0, 1, 2], ys, color=MODEL_COLOR[m], linewidth=1.4, marker=MODEL_MARKER[m],
+        ax.plot([0, 1, 2], ys, color=MODEL_COLOR[m], linestyle="none", marker=MODEL_MARKER[m],
                 markersize=4.5, markeredgecolor=SURFACE, markeredgewidth=0.6, label=MODEL_LABEL[m], zorder=3)
     ax.set_xticks([0, 1, 2])
     ax.set_xticklabels(["GSE98793\n(nested CV)", "GSE32280\n(external)", "GSE39653\n(external)"])
